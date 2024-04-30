@@ -1,3 +1,4 @@
+#include <array>
 #include <SFML/Graphics.hpp>
 
 int main()
