@@ -7,11 +7,11 @@ int main()
     const int height = 16;
     const int width = 30;
 
-    sf::RenderWindow window(sf::VideoMode(500, 500), "Minesweeper");
+    sf::RenderWindow window(sf::VideoMode(660, 360), "Minesweeper"); // width x height
     std::vector<sf::RectangleShape> squares(height * width);
 
-    const float spacingX = 10.0;
-    const float spacingY = 10.0;
+    const float spacingX = 22.0;
+    const float spacingY = 22.0;
 
     float positionX = 0;
     float positionY = 0;
@@ -20,6 +20,9 @@ int main()
             sf::RectangleShape square(sf::Vector2f(20.f, 20.f));
             square.setFillColor(sf::Color(100, 250, 0));
             square.setPosition(positionX, positionY);
+          /*  square.setOutlineThickness(2.f);
+            square.setOutlineColor(sf::Color::Black);*/
+
             squares.push_back(square);
             positionX += spacingX;
 
