@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 /*
 * Possibe tile values:
@@ -17,11 +18,14 @@ struct Tile
 class Game
 {
 public:
-
+	std::vector<std::vector<Tile>> GetGrid() {
+		return grid;
+	}
 private:
 	int sizeX = 16;
 	int sizeY = 30;
-	Tile grid[16][30];
+	//Tile grid[16][30];
+	std::vector<std::vector<Tile>> grid;
 
 	void GenerateMines(int mines) { // Recursive Function
 		srand((unsigned) time(NULL));

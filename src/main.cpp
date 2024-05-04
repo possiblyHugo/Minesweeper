@@ -2,9 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
+#include "Game.h"
 
 int main()
 {
+    Game newGame;
+    std::vector<std::vector<Tile>> grid = newGame.GetGrid();
+
     const int height = 16;
     const int width = 30;
 
@@ -24,8 +28,10 @@ int main()
         std::cout << "Error loading font.";
         return -1;
     }
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
+
+
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[i].size(); j++) {
             sf::RectangleShape square(sf::Vector2f(20.f, 20.f));
             square.setFillColor(sf::Color(252, 186, 3));
             square.setPosition(positionX, positionY);
@@ -42,6 +48,7 @@ int main()
             text.setCharacterSize(12);
             text.setPosition(positionX + 4, positionY + 3);
             texts.push_back(text);
+
 
             positionX += spacingX;
         }
