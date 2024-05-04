@@ -5,6 +5,9 @@
 #include <chrono>
 #include "Game.h"
 
+sf::Vector2i ConvertToGrid(sf::Vector2i screenCoord) {
+    return sf::Vector2i(screenCoord.x / 22, screenCoord.y / 22); // divides by the spacing to get the current grid
+}
 
 int main()
 {
@@ -41,6 +44,14 @@ int main()
         }
 
         window.display();
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            sf::Vector2i gridCoord = ConvertToGrid(sf::Mouse::getPosition(window));
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            sf::Vector2i gridCoord = ConvertToGrid(sf::Mouse::getPosition(window));
+        }
+
     }
 
     return 0;

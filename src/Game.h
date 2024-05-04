@@ -40,6 +40,10 @@ public:
 
 	}
 
+	std::vector<std::vector<Tile>> GetGrid() {
+		return grid;
+	}
+
 	void DrawBoard(std::vector<sf::RectangleShape>& squares, std::vector<sf::Text>& texts) {
 		const float spacingX = 22.0;
 		const float spacingY = 22.0;
@@ -79,9 +83,6 @@ public:
 		}
 	}
 
-	std::vector<std::vector<Tile>> GetGrid() {
-		return grid;
-	}
 private:
 	int sizeX = 16;
 	int sizeY = 30;
