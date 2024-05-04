@@ -61,16 +61,21 @@ public:
 
 				sf::Text text;
 				text.setFont(font);
-				text.setString(grid[i][j].value);
 				text.setFillColor(sf::Color::Black);
 				text.setCharacterSize(12);
 				text.setPosition(positionX + 4, positionY + 3);
 
-				if (grid[i][j].value == "m") {
-					square.setFillColor(sf::Color::Red);
+				if (grid[i][j].value == "*") {
+					square.setFillColor(sf::Color(255, 41, 41));
+					text.setString(grid[i][j].value);
+				}
+				else if (grid[i][j].discovered) {
+					square.setFillColor(sf::Color(247, 206, 92));
+					text.setString(grid[i][j].value);
 				}
 				else {
-					square.setFillColor(sf::Color::Yellow);
+					square.setFillColor(sf::Color(252, 186, 3));
+					text.setString("");
 				}
 
 				squares.push_back(square);
@@ -83,7 +88,13 @@ public:
 		}
 	}
 
+	// User input
+	void LeftClick(sf::Vector2i coord) {
+
+	}
+
 private:
+	bool DEBUG_MODE = false;
 	int sizeX = 16;
 	int sizeY = 30;
 	//Tile grid[16][30];
