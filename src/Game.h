@@ -1,4 +1,6 @@
 #pragma once
+
+#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -19,10 +21,62 @@ struct Tile
 class Game
 {
 public:
+	sf::Font font;
+
+	const float spacingX = 22.0;
+	const float spacingY = 22.0;
+
+	float positionX = 0;
+	float positionY = 0;
+
 	void Init() {
 		srand((unsigned)time(NULL));
 		GenerateMines();
 		GenerateBoard();
+
+		if (!font.loadFromFile("arial.ttf")) {
+			std::cout << "Error loading font.";
+		}
+
+	}
+
+	void DrawBoard(std::vector<sf::RectangleShape>& squares, std::vector<sf::Text>& texts) {
+		const float spacingX = 22.0;
+		const float spacingY = 22.0;
+
+		float positionX = 0;
+		float positionY = 0;
+
+		for (int i = 0; i < grid.size(); i++) {
+			for (int j = 0; j < grid[i].size(); j++) {
+				sf::RectangleShape square(sf::Vector2f(20.f, 20.f));
+				square.setPosition(positionX, positionY);
+				/*  square.setOutlineThickness(2.f);
+				  square.setOutlineColor(sf::Color::Black);*/
+
+
+				sf::Text text;
+				text.setFont(font);
+				text.setString(grid[i][j].value);
+				text.setFillColor(sf::Color::Black);
+				text.setCharacterSize(12);
+				text.setPosition(positionX + 4, positionY + 3);
+
+				if (grid[i][j].value == "m") {
+					square.setFillColor(sf::Color::Red);
+				}
+				else {
+					square.setFillColor(sf::Color::Yellow);
+				}
+
+				squares.push_back(square);
+				texts.push_back(text);
+
+				positionX += spacingX;
+			}
+			positionY += spacingY;
+			positionX = 0;
+		}
 	}
 
 	std::vector<std::vector<Tile>> GetGrid() {
