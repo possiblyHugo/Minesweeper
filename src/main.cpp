@@ -7,6 +7,7 @@
 int main()
 {
     Game newGame;
+    newGame.Init();
     std::vector<std::vector<Tile>> grid = newGame.GetGrid();
 
     const int height = 16;
@@ -32,23 +33,30 @@ int main()
 
     for (int i = 0; i < grid.size(); i++) {
         for (int j = 0; j < grid[i].size(); j++) {
+            std::cout << grid[i][j].value << "\n";
             sf::RectangleShape square(sf::Vector2f(20.f, 20.f));
-            square.setFillColor(sf::Color(252, 186, 3));
             square.setPosition(positionX, positionY);
           /*  square.setOutlineThickness(2.f);
             square.setOutlineColor(sf::Color::Black);*/
 
-            squares.push_back(square);
 
-            std::string coordinates = "6";
+            //std::cout << grid[i][j].value << "\n";
             sf::Text text;
             text.setFont(font);
-            text.setString(coordinates);
+            text.setString(grid[i][j].value);
             text.setFillColor(sf::Color::Black);
             text.setCharacterSize(12);
             text.setPosition(positionX + 4, positionY + 3);
-            texts.push_back(text);
 
+            if (grid[i][j].value == "m") {
+                square.setFillColor(sf::Color::Red);
+            }
+            else {
+                square.setFillColor(sf::Color::Yellow);
+            }
+            
+            squares.push_back(square);
+            texts.push_back(text);
 
             positionX += spacingX;
         }
