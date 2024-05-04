@@ -5,8 +5,8 @@
 #include <chrono>
 #include "Game.h"
 
-sf::Vector2i ConvertToGrid(sf::Vector2i screenCoord) {
-    return sf::Vector2i(screenCoord.x / 22, screenCoord.y / 22); // divides by the spacing to get the current grid
+sf::Vector2i ConvertToGrid(int x, int y) {
+    return sf::Vector2i(x / 22, y / 22); // divides by the spacing to get the current grid
 }
 
 int main()
@@ -28,8 +28,22 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
+
+            switch (event.type) 
+            {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+
+                case sf::Event::MouseButtonPressed:
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        sf::Vector2i gridCoord = ConvertToGrid(event.mouseButton.x, event.mouseButton.y);
+                        newGame.LeftClick(gridCoord);
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Right) {
+                        sf::Vector2i gridCoord = ConvertToGrid(event.mouseButton.x, event.mouseButton.y);
+                    }
+            }
         }
 
         window.clear();
@@ -44,13 +58,6 @@ int main()
         }
 
         window.display();
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            sf::Vector2i gridCoord = ConvertToGrid(sf::Mouse::getPosition(window));
-        }
-        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            sf::Vector2i gridCoord = ConvertToGrid(sf::Mouse::getPosition(window));
-        }
 
     }
 

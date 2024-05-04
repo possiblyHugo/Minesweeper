@@ -90,7 +90,17 @@ public:
 
 	// User input
 	void LeftClick(sf::Vector2i coord) {
+		Tile selectedTile = grid[coord.y][coord.x];
 
+		if (!selectedTile.discovered) {
+			grid[coord.y][coord.x].discovered = true;
+		}
+
+		std::cout << grid[coord.y][coord.x].discovered << "\n";
+	}
+
+	void RightClick(sf::Vector2i coord) {
+		//
 	}
 
 private:
