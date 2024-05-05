@@ -9,7 +9,7 @@
 #include "Game.h"
 
 sf::Vector2i ConvertToGrid(int x, int y) {
-    return sf::Vector2i(std::clamp(x / 22, 0, 15), std::clamp((y / 22), 0, 29)); // divides by the spacing to get the current grid
+    return sf::Vector2i(std::clamp(x / 22, 0, 29), std::clamp((y / 22), 0, 15)); // divides by the spacing to get the current grid
 }
 
 int main()

@@ -67,7 +67,14 @@ public:
 					text.setString("*");
 				}
 				else if (grid[i][j].discovered) {
-					square.setFillColor(sf::Color(247, 206, 92));
+
+					if (grid[i][j].value == "m") {
+						square.setFillColor(sf::Color(255, 0, 34));
+
+					}
+					else {
+						square.setFillColor(sf::Color(255, 239, 66));
+					}
 					text.setString(grid[i][j].value);
 				}
 				else {
@@ -212,7 +219,7 @@ private:
 	}
 
 	bool InBounds(int x, int y) {
-		return (x >= 0 || x < sizeX - 1) || (y >= 0 || y < sizeY - 1);
+		return (x >= 0 && x < sizeX - 1) && (y >= 0 && y < sizeY - 1);
 	}
 
 	void ZeroTileReveal(sf::Vector2i coord) {
@@ -257,6 +264,7 @@ private:
 
 	void AddToQueue(std::queue<sf::Vector2i>& queue, std::unordered_map<std::string, bool>& visited, int x, int y) {
 		if (InBounds(x, y) && !GetVisitedValue(visited, x, y)) {
+			std::cout << "Queue: " << x << "," << y << "\n";
 			queue.push(sf::Vector2i(x, y));
 		}
 		else {
