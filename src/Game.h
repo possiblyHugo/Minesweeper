@@ -28,8 +28,6 @@ public:
 
 	void Init() {
 		srand((unsigned)time(NULL));
-		GenerateMines();
-		GenerateBoard();
 
 		if (!font.loadFromFile("arial.ttf")) {
 			std::cout << "Error loading font.";
@@ -78,7 +76,7 @@ public:
 					}
 					else if (grid[i][j].value == "0") {
 						square.setFillColor(sf::Color(186, 175, 52));
-						text.setString(" ");
+						text.setString("");
 					}
 					else {
 						square.setFillColor(sf::Color(255, 239, 66));
@@ -111,27 +109,29 @@ public:
 		Tile selectedTile = grid[coord.y][coord.x];
 
 		if (!selectedTile.discovered && !selectedTile.flagged && !gameOver) {
-			if (selectedTile.value == "0") {
+
+			if (firstPlay) {
+				MarkReserved(coord.x, coord.y); // Middle
+				
+				MarkReserved(coord.x - 1, coord.y); // Left
+				MarkReserved(coord.x + 1, coord.y); // Right
+				MarkReserved(coord.x, coord.y - 1); // Top
+				MarkReserved(coord.x, coord.y + 1); // Bottom
+
+				MarkReserved(coord.x - 1, coord.y - 1); // Top Left
+				MarkReserved(coord.x + 1, coord.y - 1); // Top Right
+				MarkReserved(coord.x - 1, coord.y + 1); // Top Left
+				MarkReserved(coord.x + 1, coord.y + 1); // Top Right
+
+				// generate board AFTER the first click
+				GenerateMines();
+				GenerateBoard();
+				ZeroTileReveal(sf::Vector2i(coord.x, coord.y));
+				firstPlay = false;
+			}
+			else if (selectedTile.value == "0") {
 				grid[coord.y][coord.x].discovered = true;
 				ZeroTileReveal(coord);
-			}
-			else if (selectedTile.value == "m" && firstPlay) {
-				for (int x = 0; x < sizeX; x++) {
-					if (grid[0][x].value != "m") {
-						grid[coord.y][coord.x].value = "?";
-						grid[0][x].value = "m";
-
-						GenerateBoard();
-
-						grid[coord.y][coord.x].discovered = true;
-						if (selectedTile.value == "0") {
-							ZeroTileReveal(coord);
-						}
-						firstPlay = false;
-
-						break;
-					}
-				}
 			}
 			else if (selectedTile.value == "m" ) {
 				grid[coord.y][coord.x].discovered = true;
@@ -201,7 +201,7 @@ private:
 			randX = rand() % (sizeX - 1);
 			randY = rand() % (sizeY - 1);
 
-			if (grid[randY][randX].value == "m") {
+			if (grid[randY][randX].value == "m" || grid[randY][randX].value == "r") {
 				continue;
 			}
 			else {
@@ -273,6 +273,12 @@ private:
 		}
 	}
 
+	void MarkReserved(int x, int y) {
+		if (InBounds(x, y)) {
+			grid[y][x].value = "r";
+		}
+	}
+
 	bool InBounds(int x, int y) {
 		return (x >= 0 && x < sizeX - 1) && (y >= 0 && y < sizeY - 1);
 	}
@@ -294,7 +300,7 @@ private:
 			convertedX = std::to_string(currentCoord.x);
 			convertedY = std::to_string(currentCoord.y);
 
-			if (grid[currentCoord.y][currentCoord.x].value == "0") {
+			if (grid[currentCoord.y][currentCoord.x].value == "0" || grid[currentCoord.y][currentCoord.x].value == "R") {
 				grid[currentCoord.y][currentCoord.x].discovered = true;
 
 				AddToQueue(queue, visited, currentCoord.x - 1, currentCoord.y); // Left
