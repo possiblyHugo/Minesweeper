@@ -16,7 +16,7 @@ int main()
 {
     const int height = 16;
     const int width = 30;
-    sf::RenderWindow window(sf::VideoMode(660, 360), "Minesweeper"); // width x height
+    sf::RenderWindow window(sf::VideoMode(660, 350), "Minesweeper"); // width x height
 
     std::vector<sf::RectangleShape> squares(height * width);
     std::vector<sf::Text> texts(height * width);
