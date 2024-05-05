@@ -42,6 +42,7 @@ int main()
                     }
                     else if (event.mouseButton.button == sf::Mouse::Right) {
                         sf::Vector2i gridCoord = ConvertToGrid(event.mouseButton.x, event.mouseButton.y);
+                        newGame.RightClick(gridCoord); 
                     }
             }
         }
@@ -49,6 +50,7 @@ int main()
         window.clear();
 
         newGame.DrawBoard(squares, texts);
+        std::cout << grid[0][0].value << "\n";
         for (auto shape : squares) {
             window.draw(shape);
         }
@@ -57,6 +59,7 @@ int main()
             window.draw(text);
         }
 
+        newGame.ClearBoard(squares, texts);
         window.display();
 
     }

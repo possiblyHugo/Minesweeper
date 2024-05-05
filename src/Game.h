@@ -14,6 +14,7 @@
 
 struct Tile 
 {
+	bool flagged = false;
 	bool discovered = false;
 	std::string value = "?";
 };
@@ -65,9 +66,9 @@ public:
 				text.setCharacterSize(12);
 				text.setPosition(positionX + 4, positionY + 3);
 
-				if (grid[i][j].value == "*") {
+				if (grid[i][j].flagged) {
 					square.setFillColor(sf::Color(255, 41, 41));
-					text.setString(grid[i][j].value);
+					text.setString("*");
 				}
 				else if (grid[i][j].discovered) {
 					square.setFillColor(sf::Color(247, 206, 92));
@@ -87,6 +88,11 @@ public:
 			positionX = 0;
 		}
 	}
+	
+	void ClearBoard(std::vector<sf::RectangleShape>& squares, std::vector<sf::Text>& texts) {
+		squares.clear();
+		texts.clear();
+	}
 
 	// User input
 	void LeftClick(sf::Vector2i coord) {
@@ -95,12 +101,22 @@ public:
 		if (!selectedTile.discovered) {
 			grid[coord.y][coord.x].discovered = true;
 		}
-
-		std::cout << grid[coord.y][coord.x].discovered << "\n";
 	}
 
 	void RightClick(sf::Vector2i coord) {
-		//
+		Tile selectedTile = grid[coord.y][coord.x];
+
+		if (!selectedTile.discovered) {
+
+			if (selectedTile.flagged) {
+				grid[coord.y][coord.x].flagged = false;
+			}
+			else {
+				std::cout << "Placing\n";
+				grid[coord.y][coord.x].flagged = true;
+			}
+
+		}
 	}
 
 private:
