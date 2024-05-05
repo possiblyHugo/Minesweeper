@@ -111,13 +111,35 @@ public:
 		Tile selectedTile = grid[coord.y][coord.x];
 
 		if (!selectedTile.discovered && !selectedTile.flagged && !gameOver) {
-			grid[coord.y][coord.x].discovered = true;
 			if (selectedTile.value == "0") {
+				grid[coord.y][coord.x].discovered = true;
 				ZeroTileReveal(coord);
 			}
-			else if (selectedTile.value == "m") {
+			else if (selectedTile.value == "m" && firstPlay) {
+				for (int x = 0; x < sizeX; x++) {
+					if (grid[0][x].value != "m") {
+						grid[coord.y][coord.x].value = "?";
+						grid[0][x].value = "m";
+
+						GenerateBoard();
+
+						grid[coord.y][coord.x].discovered = true;
+						if (selectedTile.value == "0") {
+							ZeroTileReveal(coord);
+						}
+						firstPlay = false;
+
+						break;
+					}
+				}
+			}
+			else if (selectedTile.value == "m" ) {
+				grid[coord.y][coord.x].discovered = true;
 				gameOver = true;
 				std::cout << "Game over";
+			}
+			else {
+				grid[coord.y][coord.x].discovered = true;
 			}
 		}
 	}
@@ -159,6 +181,7 @@ private:
 	const int sizeY = 16;
 	const int sizeX = 30;
 	bool gameOver = false;
+	bool firstPlay = true;
 
 	//Tile grid[16][30];
 	std::vector<std::vector<Tile>> grid = InitializeGrid();
