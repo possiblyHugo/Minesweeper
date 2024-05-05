@@ -99,7 +99,7 @@ public:
 			positionX = 0;
 		}
 	}
-	
+
 	void ClearBoard(std::vector<sf::RectangleShape>& squares, std::vector<sf::Text>& texts) {
 		squares.clear();
 		texts.clear();
@@ -110,12 +110,13 @@ public:
 
 		Tile selectedTile = grid[coord.y][coord.x];
 
-		if (!selectedTile.discovered && !selectedTile.flagged) {
+		if (!selectedTile.discovered && !selectedTile.flagged && !gameOver) {
 			grid[coord.y][coord.x].discovered = true;
 			if (selectedTile.value == "0") {
 				ZeroTileReveal(coord);
 			}
 			else if (selectedTile.value == "m") {
+				gameOver = true;
 				std::cout << "Game over";
 			}
 		}
@@ -124,7 +125,7 @@ public:
 	void RightClick(sf::Vector2i coord) {
 		Tile selectedTile = grid[coord.y][coord.x];
 
-		if (!selectedTile.discovered) {
+		if (!selectedTile.discovered && !gameOver) {
 
 			if (selectedTile.flagged) {
 				grid[coord.y][coord.x].flagged = false;
@@ -136,10 +137,29 @@ public:
 		}
 	}
 
+	bool IsGameOver() {
+		return gameOver;
+	}
+
+	void GameOverStart(sf::RenderWindow& window) {
+		gameOver = true;
+		sf::Text text;
+		text.setFont(font);
+		text.setPosition(50, 100);
+		text.setString("Game Over!");
+		text.setFillColor(sf::Color::Red);
+		text.setCharacterSize(100);
+		text.setStyle(sf::Text::Bold);
+
+		window.draw(text);
+	}
+
 private:
-	bool DEBUG_MODE = true;
+	bool DEBUG_MODE = false;
 	const int sizeY = 16;
 	const int sizeX = 30;
+	bool gameOver = false;
+
 	//Tile grid[16][30];
 	std::vector<std::vector<Tile>> grid = InitializeGrid();
 
@@ -214,12 +234,12 @@ private:
 			}
 		}
 	}
-	// 11, 28
-	bool CheckForMine(int x, int y) { // 30, 16
+
+	bool CheckForMine(int x, int y) {
 		if ( x < 0 || x > sizeY - 1 ) { // Check for bounds
 			return false;
 		} 
-		else if (y < 0 || y > sizeX - 1) {
+		else if (y < 0 || y > sizeX - 1) { // For whatever reason I HAVE to split the x and y into 2 conditionals
 			return false;
 		}
 		else if (grid[x][y].value == "m") {

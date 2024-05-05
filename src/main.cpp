@@ -52,6 +52,7 @@ int main()
 
         window.clear();
 
+
         newGame.DrawBoard(squares, texts);
         for (auto shape : squares) {
             window.draw(shape);
@@ -59,6 +60,10 @@ int main()
 
         for (auto text : texts) {
             window.draw(text);
+        }
+
+        if (newGame.IsGameOver()) {
+            newGame.GameOverStart(window);
         }
 
         newGame.ClearBoard(squares, texts);
