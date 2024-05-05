@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <unordered_map>
+#include <queue>
 
 /*
 * Possibe tile values:
@@ -210,6 +212,56 @@ private:
 		}
 	}
 
+	bool InBounds(int x, int y) {
+		return ((x < 0 || x > sizeX - 1) || (y < 0 || y > sizeY - 1));
+	}
+
+	void ZeroTileReveal(sf::Vector2i coord) {
+		std::unordered_map<std::string, bool> visited;
+		std::queue<sf::Vector2i> queue;
+		std::string convertedX;
+		std::string convertedY;
+
+		AddToVisited(visited, coord, true);
+
+		queue.push(coord);
+
+		while (!queue.empty()) {
+			sf::Vector2i currentCoord = queue.front();
+			queue.pop();
+			convertedX = std::to_string(currentCoord.x);
+			convertedY = std::to_string(currentCoord.y);
+
+			if (grid[currentCoord.y][currentCoord.x].value == "0") {
+				
+				AddToQueue(queue, currentCoord.x - 1, currentCoord.y); // Left
+				AddToQueue(queue, currentCoord.x + 1, currentCoord.y); // Right
+				AddToQueue(queue, currentCoord.x, currentCoord.y + 1); // Top
+				AddToQueue(queue, currentCoord.x, currentCoord.y - 1); // Bottom
+
+				AddToQueue(queue, currentCoord.x - 1, currentCoord.y + 1); // Top Left
+				AddToQueue(queue, currentCoord.x + 1, currentCoord.y + 1); // Top Right
+				AddToQueue(queue, currentCoord.x - 1, currentCoord.y - 1); // Bottom Left
+				AddToQueue(queue, currentCoord.x + 1, currentCoord.y - 1); // Bottom Right
+
+			}
+
+		}
+	}
+
+	void AddToQueue(std::queue<sf::Vector2i>& queue, int x, int y) {
+		if (InBounds(x, y)) { // Left
+			queue.push(sf::Vector2i(x - 1, y));
+		}
+	}
+
+	void AddToVisited(std::unordered_map<std::string, bool>& visited, sf::Vector2i coord, bool toggle) {
+		visited[std::to_string(coord.y) + "," + std::to_string(coord.y)] = toggle;
+	}
+
+	bool GetVisitedValue(std::unordered_map<std::string, bool>& visited, sf::Vector2i coord) {
+		return visited[std::to_string(coord.y) + "," + std::to_string(coord.y)];
+	}
 
 };
 
