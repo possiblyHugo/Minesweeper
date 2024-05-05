@@ -245,13 +245,12 @@ private:
 				AddToQueue(queue, currentCoord.x + 1, currentCoord.y - 1); // Bottom Right
 
 			}
-
 		}
 	}
 
 	void AddToQueue(std::queue<sf::Vector2i>& queue, int x, int y) {
 		if (InBounds(x, y)) { // Left
-			queue.push(sf::Vector2i(x - 1, y));
+			queue.push(sf::Vector2i(x, y));
 		}
 	}
 
