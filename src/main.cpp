@@ -1,12 +1,15 @@
 #include <iostream>
-#include <SFML/Graphics.hpp>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <chrono>
+
+#include <SFML/Graphics.hpp>
+
 #include "Game.h"
 
 sf::Vector2i ConvertToGrid(int x, int y) {
-    return sf::Vector2i(x / 22, y / 22); // divides by the spacing to get the current grid
+    return sf::Vector2i(std::clamp(x / 22, 0, 15), std::clamp((y / 22), 0, 29)); // divides by the spacing to get the current grid
 }
 
 int main()
@@ -50,7 +53,6 @@ int main()
         window.clear();
 
         newGame.DrawBoard(squares, texts);
-        std::cout << grid[0][0].value << "\n";
         for (auto shape : squares) {
             window.draw(shape);
         }

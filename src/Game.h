@@ -26,12 +26,6 @@ class Game
 public:
 	sf::Font font;
 
-	const float spacingX = 22.0;
-	const float spacingY = 22.0;
-
-	float positionX = 0;
-	float positionY = 0;
-
 	void Init() {
 		srand((unsigned)time(NULL));
 		GenerateMines();
@@ -98,10 +92,17 @@ public:
 
 	// User input
 	void LeftClick(sf::Vector2i coord) {
+		std::cout << coord.x << "," << coord.y << "\n";
 		Tile selectedTile = grid[coord.y][coord.x];
 
-		if (!selectedTile.discovered) {
+		if (!selectedTile.discovered && !selectedTile.flagged) {
 			grid[coord.y][coord.x].discovered = true;
+			if (selectedTile.value == "0") {
+				ZeroTileReveal(coord);
+			}
+			else if (selectedTile.value == "m") {
+				std::cout << "Game over";
+			}
 		}
 	}
 
@@ -114,7 +115,6 @@ public:
 				grid[coord.y][coord.x].flagged = false;
 			}
 			else {
-				std::cout << "Placing\n";
 				grid[coord.y][coord.x].flagged = true;
 			}
 
@@ -123,14 +123,14 @@ public:
 
 private:
 	bool DEBUG_MODE = false;
-	int sizeX = 16;
-	int sizeY = 30;
+	int sizeY = 16;
+	int sizeX = 30;
 	//Tile grid[16][30];
 	std::vector<std::vector<Tile>> grid = InitializeGrid();
 
 	std::vector<std::vector<Tile>> InitializeGrid() {
 		Tile newTile;
-		return std::vector<std::vector<Tile>>(sizeX, std::vector<Tile>(sizeY, newTile));
+		return std::vector<std::vector<Tile>>(sizeY, std::vector<Tile>(sizeX, newTile));
 	}
 
 	void GenerateMines() { // Recursive Function
@@ -143,11 +143,11 @@ private:
 			randX = rand() % (sizeX - 1);
 			randY = rand() % (sizeY - 1);
 
-			if (grid[randX][randY].value == "m") {
+			if (grid[randY][randX].value == "m") {
 				continue;
 			}
 			else {
-				grid[randX][randY].value = "m";
+				grid[randY][randX].value = "m";
 				mines--;
 			}
 		}
@@ -159,43 +159,42 @@ private:
 			for (int j = 0; j < sizeY; j++) {
 				int mineCount = 0;
 
-				if (grid[i][j].value == "m") {
+				if (grid[j][i].value == "m") {
 					continue;
 				}
-
 				// top, bottom, left, right
-				if ( CheckForMine(i, j + 1) ) { // Top
+				if ( CheckForMine(j, i + 1) ) { // Top
 					mineCount++;
 				}
 
-				if (CheckForMine(i, j - 1)) { // Bottom
+				if (CheckForMine(j, i - 1)) { // Bottom
 					mineCount++;
 				} 
 
-				if (CheckForMine(i - 1, j)) { // Left
+				if (CheckForMine(j - 1, i)) { // Left
 					mineCount++;
 				}
 
-				if (CheckForMine(i + 1, j)) { // Right
+				if (CheckForMine(j + 1, i)) { // Right
 					mineCount++;
 				}
 
-				if (CheckForMine(i - 1, j + 1)) { // Top Left
+				if (CheckForMine(j - 1, i + 1)) { // Top Left
 					mineCount++;
 				}
 
-				if (CheckForMine(i + 1, j + 1)) { // Top Right
+				if (CheckForMine(j + 1, i + 1)) { // Top Right
 					mineCount++;
 				}
 
-				if (CheckForMine(i - 1, j - 1)) { // Bottom Left
+				if (CheckForMine(j - 1, i - 1)) { // Bottom Left
 					mineCount++;
 				}
 
-				if (CheckForMine(i + 1, j - 1)) { // Bottom Right
+				if (CheckForMine(j + 1, i - 1)) { // Bottom Right
 					mineCount++;
 				}
-				grid[i][j].value = std::to_string(mineCount);
+				grid[j][i].value = std::to_string(mineCount);
 			}
 		}
 	}
@@ -204,7 +203,7 @@ private:
 		if ((x < 0 || x > sizeX - 1) || (y < 0 || y > sizeY - 1)) { // Check for bounds
 			return false;
 		}
-		else if (grid[x][y].value == "m") {
+		else if (grid[y][x].value == "m") {
 			return true;
 		}
 		else {
@@ -213,7 +212,7 @@ private:
 	}
 
 	bool InBounds(int x, int y) {
-		return ((x < 0 || x > sizeX - 1) || (y < 0 || y > sizeY - 1));
+		return (x >= 0 || x < sizeX - 1) || (y >= 0 || y < sizeY - 1);
 	}
 
 	void ZeroTileReveal(sf::Vector2i coord) {
@@ -228,38 +227,49 @@ private:
 
 		while (!queue.empty()) {
 			sf::Vector2i currentCoord = queue.front();
+			AddToVisited(visited, currentCoord, true);
 			queue.pop();
 			convertedX = std::to_string(currentCoord.x);
 			convertedY = std::to_string(currentCoord.y);
 
+			std::cout << currentCoord.x << "," << currentCoord.y << "\n";
 			if (grid[currentCoord.y][currentCoord.x].value == "0") {
-				
-				AddToQueue(queue, currentCoord.x - 1, currentCoord.y); // Left
-				AddToQueue(queue, currentCoord.x + 1, currentCoord.y); // Right
-				AddToQueue(queue, currentCoord.x, currentCoord.y + 1); // Top
-				AddToQueue(queue, currentCoord.x, currentCoord.y - 1); // Bottom
+				grid[currentCoord.y][currentCoord.x].discovered = true;
 
-				AddToQueue(queue, currentCoord.x - 1, currentCoord.y + 1); // Top Left
-				AddToQueue(queue, currentCoord.x + 1, currentCoord.y + 1); // Top Right
-				AddToQueue(queue, currentCoord.x - 1, currentCoord.y - 1); // Bottom Left
-				AddToQueue(queue, currentCoord.x + 1, currentCoord.y - 1); // Bottom Right
+				AddToQueue(queue, visited, currentCoord.x - 1, currentCoord.y); // Left
+				AddToQueue(queue, visited, currentCoord.x + 1, currentCoord.y); // Right
+				AddToQueue(queue, visited, currentCoord.x, currentCoord.y + 1); // Top
+				AddToQueue(queue, visited, currentCoord.x, currentCoord.y - 1); // Bottom
+
+				AddToQueue(queue, visited, currentCoord.x - 1, currentCoord.y + 1); // Top Left
+				AddToQueue(queue, visited, currentCoord.x + 1, currentCoord.y + 1); // Top Right
+				AddToQueue(queue, visited, currentCoord.x - 1, currentCoord.y - 1); // Bottom Left
+				AddToQueue(queue, visited, currentCoord.x + 1, currentCoord.y - 1); // Bottom Right
 
 			}
+			else if (grid[currentCoord.y][currentCoord.x].value != "m" && !grid[currentCoord.y][currentCoord.x].flagged) {
+				std::cout << "Discovered\n";
+				grid[currentCoord.y][currentCoord.x].discovered = true;
+			}
 		}
+		std::cout << "Ended\n"; 
 	}
 
-	void AddToQueue(std::queue<sf::Vector2i>& queue, int x, int y) {
-		if (InBounds(x, y)) { // Left
+	void AddToQueue(std::queue<sf::Vector2i>& queue, std::unordered_map<std::string, bool>& visited, int x, int y) {
+		if (InBounds(x, y) && !GetVisitedValue(visited, x, y)) {
 			queue.push(sf::Vector2i(x, y));
+		}
+		else {
+			std::cout << "Failed\n";
 		}
 	}
 
 	void AddToVisited(std::unordered_map<std::string, bool>& visited, sf::Vector2i coord, bool toggle) {
-		visited[std::to_string(coord.y) + "," + std::to_string(coord.y)] = toggle;
+		visited[std::to_string(coord.y) + "," + std::to_string(coord.x)] = toggle;
 	}
 
-	bool GetVisitedValue(std::unordered_map<std::string, bool>& visited, sf::Vector2i coord) {
-		return visited[std::to_string(coord.y) + "," + std::to_string(coord.y)];
+	bool GetVisitedValue(std::unordered_map<std::string, bool>& visited, int x, int y) {
+		return visited[std::to_string(y) + "," + std::to_string(x)];
 	}
 
 };
