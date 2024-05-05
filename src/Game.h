@@ -280,7 +280,7 @@ private:
 	}
 
 	bool InBounds(int x, int y) {
-		return (x >= 0 && x < sizeX - 1) && (y >= 0 && y < sizeY - 1);
+		return (x >= 0 && x < sizeX) && (y >= 0 && y < sizeY);
 	}
 
 	void ZeroTileReveal(sf::Vector2i coord) {

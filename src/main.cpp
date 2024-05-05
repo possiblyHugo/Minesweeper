@@ -52,7 +52,6 @@ int main()
 
         window.clear();
 
-
         newGame.DrawBoard(squares, texts);
         for (auto shape : squares) {
             window.draw(shape);
