@@ -62,7 +62,11 @@ public:
 				text.setCharacterSize(12);
 				text.setPosition(positionX + 4, positionY + 3);
 
-				if (grid[i][j].flagged) {
+				if (DEBUG_MODE) {
+					text.setString(grid[i][j].value);
+					square.setFillColor(sf::Color(252, 186, 3));
+				}
+				else if (grid[i][j].flagged) {
 					square.setFillColor(sf::Color(255, 41, 41));
 					text.setString("*");
 				}
@@ -70,12 +74,16 @@ public:
 
 					if (grid[i][j].value == "m") {
 						square.setFillColor(sf::Color(255, 0, 34));
-
+						text.setString(grid[i][j].value);
+					}
+					else if (grid[i][j].value == "0") {
+						square.setFillColor(sf::Color(186, 175, 52));
+						text.setString(" ");
 					}
 					else {
 						square.setFillColor(sf::Color(255, 239, 66));
+						text.setString(grid[i][j].value);
 					}
-					text.setString(grid[i][j].value);
 				}
 				else {
 					square.setFillColor(sf::Color(252, 186, 3));
@@ -99,7 +107,7 @@ public:
 
 	// User input
 	void LeftClick(sf::Vector2i coord) {
-		std::cout << coord.x << "," << coord.y << "\n";
+
 		Tile selectedTile = grid[coord.y][coord.x];
 
 		if (!selectedTile.discovered && !selectedTile.flagged) {
@@ -129,9 +137,9 @@ public:
 	}
 
 private:
-	bool DEBUG_MODE = false;
-	int sizeY = 16;
-	int sizeX = 30;
+	bool DEBUG_MODE = true;
+	const int sizeY = 16;
+	const int sizeX = 30;
 	//Tile grid[16][30];
 	std::vector<std::vector<Tile>> grid = InitializeGrid();
 
@@ -166,23 +174,23 @@ private:
 			for (int j = 0; j < sizeY; j++) {
 				int mineCount = 0;
 
+			
 				if (grid[j][i].value == "m") {
 					continue;
 				}
 				// top, bottom, left, right
-				if ( CheckForMine(j, i + 1) ) { // Top
+				if ( CheckForMine(j - 1, i) ) { // Top
 					mineCount++;
 				}
 
-				if (CheckForMine(j, i - 1)) { // Bottom
+				if (CheckForMine(j + 1, i)) { // Bottom
 					mineCount++;
 				} 
-
-				if (CheckForMine(j - 1, i)) { // Left
+				if (CheckForMine(j, i - 1)) { // Left
 					mineCount++;
 				}
 
-				if (CheckForMine(j + 1, i)) { // Right
+				if (CheckForMine(j, i + 1)) { // Right
 					mineCount++;
 				}
 
@@ -190,27 +198,31 @@ private:
 					mineCount++;
 				}
 
-				if (CheckForMine(j + 1, i + 1)) { // Top Right
+				if (CheckForMine(j - 1, i - 1)) { // Top Right
 					mineCount++;
 				}
 
-				if (CheckForMine(j - 1, i - 1)) { // Bottom Left
+				if (CheckForMine(j + 1, i - 1)) { // Bottom Left
 					mineCount++;
 				}
 
-				if (CheckForMine(j + 1, i - 1)) { // Bottom Right
+				if (CheckForMine(j + 1, i + 1)) { // Bottom Right
 					mineCount++;
 				}
 				grid[j][i].value = std::to_string(mineCount);
+
 			}
 		}
 	}
-
-	bool CheckForMine(int x, int y) {
-		if ((x < 0 || x > sizeX - 1) || (y < 0 || y > sizeY - 1)) { // Check for bounds
+	// 11, 28
+	bool CheckForMine(int x, int y) { // 30, 16
+		if ( x < 0 || x > sizeY - 1 ) { // Check for bounds
+			return false;
+		} 
+		else if (y < 0 || y > sizeX - 1) {
 			return false;
 		}
-		else if (grid[y][x].value == "m") {
+		else if (grid[x][y].value == "m") {
 			return true;
 		}
 		else {
@@ -239,7 +251,6 @@ private:
 			convertedX = std::to_string(currentCoord.x);
 			convertedY = std::to_string(currentCoord.y);
 
-			std::cout << currentCoord.x << "," << currentCoord.y << "\n";
 			if (grid[currentCoord.y][currentCoord.x].value == "0") {
 				grid[currentCoord.y][currentCoord.x].discovered = true;
 
@@ -255,20 +266,14 @@ private:
 
 			}
 			else if (grid[currentCoord.y][currentCoord.x].value != "m" && !grid[currentCoord.y][currentCoord.x].flagged) {
-				std::cout << "Discovered\n";
 				grid[currentCoord.y][currentCoord.x].discovered = true;
 			}
 		}
-		std::cout << "Ended\n"; 
 	}
 
 	void AddToQueue(std::queue<sf::Vector2i>& queue, std::unordered_map<std::string, bool>& visited, int x, int y) {
 		if (InBounds(x, y) && !GetVisitedValue(visited, x, y)) {
-			std::cout << "Queue: " << x << "," << y << "\n";
 			queue.push(sf::Vector2i(x, y));
-		}
-		else {
-			std::cout << "Failed\n";
 		}
 	}
 
