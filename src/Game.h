@@ -50,9 +50,6 @@ public:
 			for (int j = 0; j < grid[i].size(); j++) {
 				sf::RectangleShape square(sf::Vector2f(20.f, 20.f));
 				square.setPosition(positionX, positionY);
-				/*  square.setOutlineThickness(2.f);
-				  square.setOutlineColor(sf::Color::Black);*/
-
 
 				sf::Text text;
 				text.setFont(font);
