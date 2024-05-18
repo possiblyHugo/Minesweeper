@@ -18,7 +18,7 @@ This is a Minesweeper game developed in C++ using the SFML library for graphics 
 ## Setup Instructions
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/your-username/minesweeper.git
+    git clone https://github.com/possiblyHugo/minesweeper.git
     cd minesweeper
     ```
 
